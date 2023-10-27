@@ -41,3 +41,5 @@ specHeat2 = experimentalData(:,33);             % specific heat(C_p_2) in [kJ/kg
 specHeat3 = experimentalData(:,34);             % specific heat(C_p_3) in [kJ/kg.K]
 specHeat4 = experimentalData(:,35);             % specific heat(C_p_4) in [kJ/kg.K]
 specHeat5 = experimentalData(:,36);             % specific heat(C_p_5) in [kJ/kg.K]
+
+%% Plotting the data
