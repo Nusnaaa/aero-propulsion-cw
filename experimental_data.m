@@ -51,6 +51,6 @@ spoolRef = 108000; % reference spool speed in [rpm]
 Pref = 100.700                                   % ambient static pressure for test B1 (kPa) as stated in engine test data post on blackboard
 
 BPR = inletP4/inletP3;                          %bypass pressure ratio
-mDotCorr = massFlow .* ((sqrt(inletT3/tempRef))./(exitP3/Pref))
+mDotCorr = massFlow .* ((sqrt(inletT3/tempRef))./(exitP3/Pref));
 
 plot(BPR, mDotCorr)
