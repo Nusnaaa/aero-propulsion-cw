@@ -49,6 +49,27 @@ spoolRef = 108000; % reference spool speed in [rpm]
 
 %% Plotting the data
 
+% Calculated Mass Flow Rates
+Cd = 0.58; % discharge coefficient for circular orifices
+d1 = 0.071; % intake inlet diameter in meters (71 mm)
+
+% Compute intake area
+A = pi * (d1/2)^2;
+
+% Calculate velocity for each data point
+v = sqrt(2 * (ambPressure - inletP1) * 1e3 ./ density); % converting pressure from kPa to Pa
+
+% Compute volumetric flow rate
+Q = Cd * A * v;
+
+% Compute mass flow rate for each data point
+calculated_m_dot = density .* Q;
+
+% Displaying the calculated mass flow rate
+fprintf('Calculated Mass Flow Rates (kg/s): \n');
+disp(calculated_m_dot);
+
+
 % 11.Turbine isentropic efficiency vs. turbine corrected mass flow rate
 
 
