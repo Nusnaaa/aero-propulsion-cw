@@ -2,7 +2,10 @@
 % Date Created: Thursday 26th October 2023
 % Contributors: Sophie Millington, Corey Pearce, Charles Choi
 % Last edit: Friday 27th October 2023
-
+% Purpose: This code file will store all the data visualisation and
+% processinig work that the group carries out. It has been linked to a
+% GitHub repository found in the link below, for version control.
+% GitHub: https://github.com/Nusnaaa/aero-propulsion-cw
 
 %% Sorting the raw data into variables
 

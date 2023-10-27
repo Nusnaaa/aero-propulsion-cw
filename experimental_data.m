@@ -5,7 +5,7 @@
 % Purpose: This code file will store all the data visualisation and
 % processinig work that the group carries out. It has been linked to a
 % GitHub repository found in the link below, for version control.
-% GitHub: https://github.com/Nusnaaa/aero-propulsion-cw.git
+% GitHub: https://github.com/Nusnaaa/aero-propulsion-cw
 
 %% Sorting the raw data into variables
 

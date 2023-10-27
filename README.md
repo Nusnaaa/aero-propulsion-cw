@@ -9,24 +9,25 @@ obtain the experimental data, and GasTurb to model the engine. To simulate the
 combustion process, you will use ANSYS CFX.
 
 # Key Aims, Requirements (Tasks) and Provided Files
-Key Aims:  
-    Experiment: 
+Key Aims:
+    Experiment:
     - To gain experience in conducting experimental testing of a gas turbine 
-    engine, including test data collection. 
-    -  organise, plot, and examine the raw experimental data. 
+    engine, including test data collection.
+    -  organise, plot, and examine the raw experimental data.
     - To improve the fidelity of the test data, if necessary, using literatures and 
-    sound engineering judgement. 
+    sound engineering judgement.
     - To process the data and produce plots of key parameters of the engine 
-    performance. 
-    Modelling: 
-    - To model on-design point of the engine and validate the model. 
+    performance.
+    Modelling:
+    - To model on-design point of the engine and validate the model.
     - To model off-design points of the engine and compare with the experimental 
-    results. 
-    - To provide suggestions on how to improve the model. 
-    Combustion CFD: 
-    - To gain experience in how combustion is modelled computationally. 
-    - To simulate fuel and combustion flame fronts. 
-    - To consider flow parameters that affect the efficiency of combustion. 
+    results.
+    - To provide suggestions on how to improve the model.
+    
+    Combustion CFD:
+    - To gain experience in how combustion is modelled computationally.
+    - To simulate fuel and combustion flame fronts.
+    - To consider flow parameters that affect the efficiency of combustion.
     - To investigate the methods which will produce the most accurate results 
     compared to the experiment and/or the model.
 
