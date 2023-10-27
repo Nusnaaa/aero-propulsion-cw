@@ -95,4 +95,19 @@ xlabel('Turbine Corrected Mass Flow Rate (kg/s)');
 ylabel('Turbine Isentropic Efficiency');
 title('Turbine Isentropic Efficiency vs. Corrected Mass Flow Rate');
 grid on;
+
+%12.Turbine pressure ratio vs. turbine corrected mass flow rate
+
+% Calculating Turbine Pressure Ratio (TPR)
+TPR = inletP4 ./ entryP6;
+
+% Calculating Turbine Corrected Mass Flow Rate (TCMFR)
+TCMFR = massFlow .* sqrt(tempRef ./ exitT5) .* (pressRef ./ (entryP6 * 1e3)); % Multiply by 1e3 to convert kPa to Pa
+
+% Plotting
+figure;
+plot(TPR, TCMFR, 'o-');
+xlabel('Turbine Pressure Ratio (TPR)');
+ylabel('Turbine Corrected Mass Flow Rate (kg/s)');
+title('Turbine Pressure Ratio vs. Turbine Corrected Mass Flow Rate');
 grid on;
