@@ -31,18 +31,19 @@ Key Aims:
     compared to the experiment and/or the model.
 
 Requirements (Tasks): 
-    Experiment: 
+    
+    Experiment:
         - The experimental test will be supervised by qualified technicians. You will 
         have the opportunity to learn the test rig setup, including its various controls 
-        and sensors. Test data will be collected at several throttle settings. 
+        and sensors. Test data will be collected at several throttle settings.
         - Before modelling the engine, you will need to process and evaluate the raw 
         data obtained from the test. You may use Excel, Matlab, or any other 
         software that you are familiar with. First, you will need to evaluate the fidelity 
         of the raw data, identify any deficiencies or anomalies, and perform further 
         calculations to remedy the data. You may need to conduct literature 
-        research to obtain any missing values. 
+        research to obtain any missing values.
         - Plot some key parameters based on the experimental data, analyse and 
-        compare them with literatures: 
+        compare them with literatures:
             1. Mass flow rate vs. throttle percentage
             2. Intake pressure loss vs. throttle percentage
             3. Compressor pressure ratio vs. spool relative corrected speed
@@ -56,13 +57,12 @@ Requirements (Tasks):
             8. FAR vs. compressor corrected mass flow rate
             9. EGT vs. FAR
             10. Compressor shaft power vs. spool speed, and compare it with the 
-            turbine 
+            turbine
             11. Turbine isentropic efficiency vs. turbine corrected mass flow rate
             12. Turbine pressure ratio vs. turbine corrected mass flow rate
             13. Net thrust vs. compressor corrected mass flow rate
             14. Net thrust vs. spool relative corrected speed
-        - Summarise the findings from the experimental data and the corrective steps 
-        you have taken to improve the test data quality and accuracy. 
+        - Summarise the findings from the experimental data and the corrective steps you have taken to improve the test data quality and accuracy. 
 
     GasTurb: 
         - Based on the experimental results and your analysis, model in GasTurb the 
