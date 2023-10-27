@@ -43,26 +43,27 @@ calculations to remedy the data. You may need to conduct literature
 research to obtain any missing values. 
 o Plot some key parameters based on the experimental data, analyse and 
 compare them with literatures: 
-1. Mass flow rate vs. throttle percentage 
-2. Intake pressure loss vs. throttle percentage 
-3. Compressor pressure ratio vs. spool relative corrected speed 
+1. Mass flow rate vs. throttle percentage
+2. Intake pressure loss vs. throttle percentage
+3. Compressor pressure ratio vs. spool relative corrected speed
 4. Compressor corrected mass flow rate vs. spool relative corrected 
-speed 
+speed
 5. Compressor isentropic efficiency vs. compressor corrected mass 
-flow rate 
+flow rate
 6. Compressor exit Mach number vs. compressor corrected mass flow 
-rate 
-7. Burner pressure ratio vs. compressor corrected mass flow rate 
-8. FAR vs. compressor corrected mass flow rate 
-9. EGT vs. FAR 
+rate
+7. Burner pressure ratio vs. compressor corrected mass flow rate
+8. FAR vs. compressor corrected mass flow rate
+9. EGT vs. FAR
 10. Compressor shaft power vs. spool speed, and compare it with the 
 turbine 
-11. Turbine isentropic efficiency vs. turbine corrected mass flow rate 
-12. Turbine pressure ratio vs. turbine corrected mass flow rate 
-13. Net thrust vs. compressor corrected mass flow rate 
-14. Net thrust vs. spool relative corrected speed 
+11. Turbine isentropic efficiency vs. turbine corrected mass flow rate
+12. Turbine pressure ratio vs. turbine corrected mass flow rate
+13. Net thrust vs. compressor corrected mass flow rate
+14. Net thrust vs. spool relative corrected speed
 o Summarise the findings from the experimental data and the corrective steps 
 you have taken to improve the test data quality and accuracy. 
+
 GasTurb: 
 o Based on the experimental results and your analysis, model in GasTurb the 
 on-design point of the engine at 100% relative spool speed. Compare the 
@@ -99,7 +100,8 @@ ANSYS CFX and compare the values with the experimental and/or GasTurb
 results. 
 o Summarise the results of your CFD simulation and provide suggestions to 
 improve its accuracy. 
-Provided Files 
+
+Provided Files: 
 Engine test rig (Armfield CM14) manual 
 Engine test data (will be provided after the test) 
 Template file for importing data into GasTurb: GasTurb_Input_Template.tst 
