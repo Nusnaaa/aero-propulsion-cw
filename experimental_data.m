@@ -43,22 +43,48 @@ specHeat3 = table2array(experimentalData(:,34));             % specific heat(C_p
 specHeat4 = table2array(experimentalData(:,35));             % specific heat(C_p_4) in [kJ/kg.K]
 specHeat5 = table2array(experimentalData(:,36));             % specific heat(C_p_5) in [kJ/kg.K]
 
-% Reference values
-tempRef = 288.15;                               % reference temperature at sea level on a standard day in [K]
-pressRef = 101.325;                             % reference pressure at sea level on a standard day in [kPa]
-spoolRef = 108000;                              % reference spool speed in [rpm]
+% Reference values, conversion factors & consants
+kPa2Pa = 1*10^3;                                            % conversion factor
+tempRef = 288.15;                                           % reference temperature at sea level on a standard day in [K]
+pressRef = 101.325;                                         % reference pressure at sea level on a standard day in [kPa]
+spoolRef = 108000;                                          % reference spool speed in [rpm]
+Cd = 0.58;                                                  % discharge coefficient
+d1 = 71*10^-3;                                              % intake inlet diameter in [m]
+R = 8.314;                                                  % gas constant in [J/(mol.K)]
+intakeAirDensity = findDensity(inletP1,R,inletT2,kPa2Pa);
 
 %% Plotting the data
 
 % Plot 4: Compressor corrected mass flow rate vs. spool relative corrected speed
-massFlowCorrected = massFlow.*(sqrt(inletT3./tempRef)./(exitP3./pressRef));                  % corrected mass flow rate in [kg/s]
-correctedSpool = (spoolSpeed./spoolRef)./sqrt(inletT3./tempRef);                             % corrected spool speed in [rpm]
+intakeMassFlow = Cd*( (pi*d1^2)/4 ).*sqrt( 2.*intakeAirDensity.*(ambPressure - inletP1) );                              % intake mass flow rate. Engine values are incorrect, so this needed to be calculated. Uses equation provided under section 6 of coursework brief
+compMassFlowCorrected = intakeMassFlow.*(sqrt(inletT3./tempRef)./(exitP3./pressRef));                                   % compressor corrected mass flow rate in [kg/s]
+correctedSpool = (spoolSpeed./spoolRef)./sqrt(inletT3./tempRef);                                                        % corrected spool speed in [rpm]
 
-plot(massFlowCorrected,correctedSpool)
-xlabel('Corrected Mass Flow Rate')
-ylabel('Corrected Spool Speed')
+subplot(3,1,1)
+scatter(compMassFlowCorrected,correctedSpool)
+xlabel('Compressor Corrected Mass Flow Rate [kg/s]')
+ylabel('Corrected Spool Speed [rpm]')
 ylim([0.3 0.76])
 
 % Plot 5: Compressor isentropic efficiency vs. compressor corrected mass flow rate
-isenT3 = ;                                                                                  % calculating T3_is
+isenT3 = inletT2.*(exitP3./ambPressure).^( ( (specHeat2 + specHeat1)/2 - 1)/(specHeat2 + specHeat1)/2 );                   % calculating T3_is
+isenEfficiency = (isenT3 - inletT2)./(inletT3 - inletT2);                                                               % the isentropic efficiency
+subplot(3,1,2)
+scatter(isenEfficiency,compMassFlowCorrected)
+xlabel('Isentropic Efficiency')
+ylabel('Compressor Corrected Mass Flow Rate [kg/s]')
 
+% Plot 6: Compressor exit Mach number vs. compressor corrected mass flow rate
+
+
+%% Useful functions
+function airDensity = findDensity(pressure,gasConstant,temperature,kPa2Pa)
+            % This function returns the value of the air density at a given
+            % pressure within the engine. The formula used is based on the
+            % ideal gas law(pV = nRT) and the following equation(p =
+            % rho*RT). The density of a gas is related to the ideal gas law
+            % with the following relationship: rho = n/V. 
+            % Pressure values are in kPa, hence the conversion factor
+            
+            airDensity = (pressure.*kPa2Pa)./(gasConstant.*temperature);
+end
