@@ -50,7 +50,7 @@ pressRef = 101.325;                                         % reference pressure
 spoolRef = 108000;                                          % reference spool speed in [rpm]
 Cd = 0.58;                                                  % discharge coefficient
 d1 = 71*10^-3;                                              % intake inlet diameter in [m]
-R = 287;                                                    % gas constant in [J/(kg.K)]
+R = 8.314;                                                  % gas constant in [J/(mol.K)]
 intakeAirDensity = findDensity(inletP1,R,inletT2,kPa2Pa);
 
 %% Plotting the data
@@ -72,17 +72,11 @@ isenEfficiency = (isenT3 - inletT2)./(inletT3 - inletT2);                       
 subplot(3,1,2)
 scatter(isenEfficiency,compMassFlowCorrected)
 xlabel('Isentropic Efficiency')
-ylabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
+ylabel('Compressor Corrected Mass Flow Rate [kg/s]')
 
 % Plot 6: Compressor exit Mach number vs. compressor corrected mass flow rate
-exitVelocity = (2*pi*(d1/2)).*spoolSpeed;                                                                               % assuming the compressor diameter == intake diameter, this calculates the compressor exit velocity in [m/s]
-a = sqrt(((specHeat3 - specHeat2)./2).*R.*inletT3);                                                                     % speed of sound at compressor exit in [m/s]
-exitMach = exitVelocity/a;
-
-subplot(3,1,3)
-scatter(exitMach,compMassFlowCorrected)
-xlabel('Compressor Exit Mach Number')
-ylabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
+exitVelocity = (2*pi*d1).*spoolSpeed;                                                                                   % assuming the compressor diameter == intake diameter, this calculates the compressor exit velocity in [m/s]
+a = sqrt(((Cp_3 - Cp_2)./2).*R.*inletT3);                                                                               % speed of sound at compressor exit in [m/s]
 
 %% Useful functions
 function airDensity = findDensity(pressure,gasConstant,temperature,kPa2Pa)
