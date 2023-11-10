@@ -42,69 +42,6 @@ specHeat3 = table2array(experimentalData(:,34)); % specific heat(C_p_3) in [kJ/k
 specHeat4 = table2array(experimentalData(:,35)); % specific heat(C_p_4) in [kJ/kg.K]
 specHeat5 = table2array(experimentalData(:,36)); % specific heat(C_p_5) in [kJ/kg.K]
  
-% Reference values
-tempRef = 288.15; % reference temperature at sea level on a standard day in [K]
-pressRef = 101325; % reference pressure at sea level on a standard day in [Pa]
-spoolRef = 108000; % reference spool speed in [rpm]
-
-% Plot 1
-% Mass Flow Rate vs. Throttle Position plot
-plot(throttlePosition,massFlow,'m')
-xlabel 'Throttle Position (%)'
-ylabel 'Mass Flow rate (kg/s)'
-title 'Mass Flow Rate vs Throttle Position'
-
-% Plot 2
-% Intake pressure loss vs. Throttle Position (%) 
-inletPLoss=(ambPressure-inletP1)        % Ambient pressure - Absolute Static Inlet Pressure P1 = Intake pressure Loss
-%use first equation to the rearange it for air density
-
-% Plot
-plot(throttlePosition,inletPLoss,'g')
-xlabel 'Throttle Position (%)'
-ylabel 'Intake Pressure Loss (kPa)'
-title 'Intake pressure loss vs Throttle Position'
-
-<<<<<<< Updated upstream
-inletP4 = experimentalData(:,21);               % absolute turbine inlet static pressure(P_4) at station P4
-
-entryP6 = experimentalData(:,24);               % absolute nozzle entry pressure(P_6) at station P6
-
-<<<<<<< Updated upstream
-thrust = experimentalData(:,27);                % thrust in [N]
-speed = experimentalData(:,28);                 % speed in [rpm]
-fuelFlow = experimentalData(:,29);              % fuel flow in [l/min]
-density = experimentalData(:,30);               % upstream density in [kg/m^3]
-massFlow = experimentalData(:,31);              % mass flow rate in [kg/s]
-specHeat1 = experimentalData(:,32);             % specific heat(C_p_1) in [kJ/kg.K]
-specHeat2 = experimentalData(:,33);             % specific heat(C_p_2) in [kJ/kg.K]
-specHeat3 = experimentalData(:,34);             % specific heat(C_p_3) in [kJ/kg.K]
-specHeat4 = experimentalData(:,35);             % specific heat(C_p_4) in [kJ/kg.K]
-specHeat5 = experimentalData(:,36);             % specific heat(C_p_5) in [kJ/kg.K]
-
-%% Plotting the data
-=======
-% Plot 3
-% Compressor pressure ratio vs. spool relative corrected speed
-CompressorRatio = inletP1/inletP3                     % compressor pressure inlet / compressor pressure exit = compressor ratio 
-%plot 
-plot(CompressorRatio, spoolcorrectedspeedplaceholder) % please replace spoolspeed place holder to match plot 4
-xlabel 'Compressor Pressure Ratio'
-ylabel 'Spool Corrected Speed'
-title  'Compressor pressure ratio vs. spool relative corrected speed'
->>>>>>> Stashed changes
-=======
-thrust = table2array(experimentalData(:,27));                % thrust in [N]
-spoolSpeed = table2array(experimentalData(:,28));            % spool speed in [rpm]
-fuelFlow = table2array(experimentalData(:,29));              % fuel flow in [l/min]
-density = table2array(experimentalData(:,30));               % upstream density in [kg/m^3]
-massFlow = table2array(experimentalData(:,31));              % mass flow rate in [kg/s]
-specHeat1 = table2array(experimentalData(:,32));             % specific heat(C_p_1) in [kJ/kg.K]
-specHeat2 = table2array(experimentalData(:,33));             % specific heat(C_p_2) in [kJ/kg.K]
-specHeat3 = table2array(experimentalData(:,34));             % specific heat(C_p_3) in [kJ/kg.K]
-specHeat4 = table2array(experimentalData(:,35));             % specific heat(C_p_4) in [kJ/kg.K]
-specHeat5 = table2array(experimentalData(:,36));             % specific heat(C_p_5) in [kJ/kg.K]
-
 % Reference values, conversion factors & consants
 kPa2Pa = 1*10^3;                                            % conversion factor
 tempRef = 288.15;                                           % reference temperature at sea level on a standard day in [K]
@@ -164,16 +101,40 @@ scatter(isenEfficiency,compMassFlowCorrected)
 xlabel('Isentropic Efficiency')
 ylabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
 
-% % Plot 6: Compressor exit Mach number vs. compressor corrected mass flow rate
-% exitVelocity = sqrt( ( 2.*( (inletP3 - exitP3).*kPa2Pa ) )/( findDensity(exitP3,R) ) )
-% a = sqrt(((specHeat3 - specHeat2)./2).*R.*inletT3);                                                                     % speed of sound at compressor exit in [m/s]
-% exitMach = exitVelocity/a;
-%
-% figure('Name','Compressor exit Mach number vs. compressor corrected mass flow rate' 
-% scatter(exitMach,compMassFlowCorrected)
-% xlabel('Compressor Exit Mach Number')
-% ylabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
+% Plot 6: Compressor exit Mach number vs. compressor corrected mass flow rate
+exitMach = sqrt( 2.*( (inletP3./exitP3).^( (specHeat3 - 1)./specHeat3) - 1 ) ./ (specHeat3 + 1) );
 
+figure('Name','Compressor exit Mach number vs. compressor corrected mass flow rate')
+scatter(exitMach,compMassFlowCorrected)
+xlabel('Compressor Exit Mach Number')
+ylabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
+
+% Plot 7: Burner pressure ratio vs. compressor corrected mass flow rate
+combustorPressureRatio = inletP4./inletP3;
+
+figure('Name','Burner pressure ratio vs. compressor corrected mass flow rate')
+scatter(combustorPressureRatio,compMassFlowCorrected)
+xlabel('Burner pressure ratio')
+ylabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
+
+%% For Gasturb Model
+spoolRel = (spoolSpeed./spoolRef);
+figure('Name','Corrected Intake Mass Flow Rate vs. Spool Relative Speed')
+scatter(intakeMassFlow,spoolRel)
+xlabel('Corrected Intake Mass Flow Rate')
+ylabel('Spool Relative Speed')
+
+% Get coefficients of a line fit through the data.
+coefficients = polyfit(intakeMassFlow, spoolRel, 1);
+
+% Create a new x axis with exactly 1000 points
+xFit = linspace(min(intakeMassFlow), max(intakeMassFlow), 1000);
+
+% Get the estimated yFit value for each of those 1000 new x locations.
+yFit = polyval(coefficients , xFit);
+hold on;
+plot(xFit, yFit, 'r-', 'LineWidth', 2); % Plot fitted line.
+grid on;
 %% Useful functions
 function airDensity = findDensity(pressure,gasConstant,temperature,kPa2Pa)
             % This function returns the value of the air density at a given
@@ -185,4 +146,3 @@ function airDensity = findDensity(pressure,gasConstant,temperature,kPa2Pa)
             
             airDensity = (pressure.*kPa2Pa)./(gasConstant.*temperature);
 end
->>>>>>> Stashed changes
