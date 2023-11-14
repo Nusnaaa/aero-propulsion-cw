@@ -153,14 +153,11 @@ ylabel('Fuel-Air Ratio [l/sec]')
 
 % Plot 11: Turbine isentropic efficiency vs. turbine corrected mass flow
 % rate
-isenT5 = exitT4./( (inletP4./entryP6).^( ( ( (specHeat5 - specHeat4)./2 ) - 1)./( (specHeat5 - specHeat4)./2 ) ) );
-turbIsen = (exitT4 - exitT6)./(exitT4 - isenT5);
-turbMassFlowCorrected = intakeMassFlow.*(sqrt(exitT4./tempRef)./(inletP4./pressRef));                                   % turbine corrected mass flow rate in [kg/s]
+isenT5 = exitT4./( (inletP4/entryP6).^( ( ( (specHeat5 - specHeat4)/2 ) - 1)./( (specHeat5 - specHeat4)/2 ) ) );
+turbIsen = (exitT4 - exitT6)/(exitT4 - isenT5);
 
-figure('Name','Turbine isentropic efficiency vs. turbine corrected mass flow')
-scatter(turbIsen,turbMassFlowCorrected)
-xlabel('Turbine isentropic efficiency')
-ylabel('Turbine corrected mass flow rate')
+turbMassFlowCorrected = intakeMassFlow.*(sqrt(exitT4./tempRef)./(inletP4./pressRef));                                   % turbine corrected mass flow rate in [kg/s]
+% 
 
 %% For Gasturb Model
 spoolRel = (spoolSpeed./spoolRef);
