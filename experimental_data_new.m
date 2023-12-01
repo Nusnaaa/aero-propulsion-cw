@@ -12,7 +12,7 @@
 % Reference values, conversion factors & consants
 kPa2Pa = 1*10^3;                                            % conversion factor
 tempRef = 288.15;                                           % reference temperature at sea level on a standard day in [K]
-pressRef = 101.325;                                         % reference pressure at sea level on a standard day in [kPa]
+pressRef = 101.325*kPa2Pa;                                  % reference pressure at sea level on a standard day in [Pa]
 spoolRef = 108000;                                          % reference spool speed in [rpm]
 Cd = 0.58;                                                  % discharge coefficient
 d1 = 71*10^-3;                                              % intake inlet diameter in [m]
@@ -35,17 +35,17 @@ exitT3 = table2array(experimentalData(:,5)); % absolute temperature at compresso
 exitT4_wrong = table2array(experimentalData(:,6)); % absolute,total temperature at combustor exit(station T4) - incorrect measurement
 exitT5 = table2array(experimentalData(:,7)); % absolute, total temperature at turbine exit(station T5)
 exitT6 = table2array(experimentalData(:,8)); % absolute, total nozzle exhaust temperature(station T6)
-ambPressure = table2array(experimentalData(:,9)); % ambient pressure(P_0)
+ambPressure = table2array(experimentalData(:,9))*kPa2Pa; % ambient pressure(P_0)
  
-inletP1 = table2array(experimentalData(:,12)); % static inlet presure(p_1) in [kPa]
+inletP1 = table2array(experimentalData(:,12))*kPa2Pa; % static inlet presure(p_1) in [Pa]
  
-exitP3 = table2array(experimentalData(:,15)); % static compressor exit pressure(p_3) at station P3 in [kPa]
+exitP3 = table2array(experimentalData(:,15))*kPa2Pa; % static compressor exit pressure(p_3) at station P3 in [Pa]
  
-inletP3 = table2array(experimentalData(:,18)); % total combustor inlet pressure(P_3) at station P3 in [kPa]
+inletP3 = table2array(experimentalData(:,18))*kPa2Pa; % total combustor inlet pressure(P_3) at station P3 in [Pa]
  
-inletP4 = table2array(experimentalData(:,21)); % absolute turbine inlet static pressure(P_4) at station P4 in [kPa]
+inletP4 = table2array(experimentalData(:,21))*kPa2Pa; % absolute turbine inlet static pressure(P_4) at station P4 in [Pa]
  
-entryP6 = table2array(experimentalData(:,24)); % absolute nozzle entry pressure(P_6) at station P6 in [kPa]
+entryP6 = table2array(experimentalData(:,24))*kPa2Pa; % absolute nozzle entry pressure(P_6) at station P6 in [Pa]
  
 thrust = table2array(experimentalData(:,27)); % thrust in [N]
 spoolSpeed = table2array(experimentalData(:,28)); % spool speed in [rpm]
@@ -59,15 +59,15 @@ specHeat4 = table2array(experimentalData(:,35))*kJ2J; % specific heat(C_p_4) in 
 specHeat5 = table2array(experimentalData(:,36))*kJ2J; % specific heat(C_p_5) in [kJ/kg.K]
  
 % Recalulated values
-intakeAirDensity = findDensity(inletP1,R,inletT2,kPa2Pa);
-specheatAve_turb = (specHeat5 - specHeat4)/2;               % average Cp across turbine
-exitT4 = ( nthroot( (exitT3./inletT2), ( (specheatAve_turb - 1)./specheatAve_turb) ) ).*exitT5;
+intakeAirDensity = findDensity(inletP1,R,inletT2);
+specheatAve_turb = (specHeat5 + specHeat4)/2;               % average Cp across turbine
+specheatAve_comp = (specHeat3 + specHeat2)/2;               % average Cp across compressor
 
 
 %% Plotting the data
 
 % Plot 1: Mass flow rate vs throttle percentage
-intakeMassFlow = (Cd*( (pi*d1^2)/4 ) ).*sqrt( 2.*intakeAirDensity.*(ambPressure.*kPa2Pa - inletP1.*kPa2Pa) );                              % intake mass flow rate. Engine values are incorrect, so this needed to be calculated. Uses equation provided under section 6 of coursework brief
+intakeMassFlow = (Cd*( (pi*d1^2)/4 ) ).*sqrt( 2.*density.*(ambPressure - inletP1) );                              % intake mass flow rate. Engine values are incorrect, so this needed to be calculated. Uses equation provided under section 6 of coursework brief
 
 fuelMassFlow = (fuelFlow*litresMin2litresSec*litre2cubMetre)*fuelDensity;                                                                   % fuel mass flow rate in kg/s
 
@@ -79,7 +79,7 @@ ylabel('Mass Flow Rate [kg/s]')
 xlabel('Throttle Percentage [%]')
 
 %% Plot 2: Intake pressure loss vs throttle percentage
-compressorEntryDensity = findDensity(inletP1,R,exitT3,kPa2Pa);                                                         % the density of air at the compressor entry. Assumed pressure is equal to inlet pressure. In [kg/m^3]
+compressorEntryDensity = density;                                                         % the density of air at the compressor entry. Assumed pressure is equal to inlet pressure. In [kg/m^3]
 compressorArea = 0.25*pi*(d2^2);
 compVolumetricFlow = intakeMassFlow./compressorEntryDensity;                                                            % volumetric flow rate at compressor entry. In [m^3/s]
 compressorAirVelocity = compVolumetricFlow./compressorArea;                                                             % in [m/s]
@@ -91,8 +91,8 @@ ylabel('Intake Pressure Loss [Pa]')
 xlabel('Throttle Percentage [%]')
 
 %% Plot 3: Compressor pressure ratio vs spool relative corrected speed
-relCorrectedSpool = (spoolSpeed./spoolRef)./sqrt(exitT3./tempRef);                                                        % corrected spool speed in [rpm]
-inletP2 = exitP3./(nthroot( (exitT3./inletT2), ((specHeat3 - specHeat2)./2 - 1)./((specHeat3 - specHeat2)./2) ) );              % Pressure at compressor inlet
+relCorrectedSpool = (spoolSpeed/spoolRef)./sqrt(exitT3/tempRef);                                                        % corrected spool speed in [rpm]
+inletP2 = exitP3./(nthroot( (exitT3./inletT2), (specheatAve_comp - 1)./specheatAve_comp ) );              % Pressure at compressor inlet
 compPressureRatio = exitP3./inletP1;
 
 figure('Name','Compressor Pressure ratio vs Spool Relative Corected Speed')
@@ -101,7 +101,7 @@ ylabel('Compressor pressure ratio')
 xlabel('Spool relative corrected speed [rpm]')
 
 %% Plot 4: Compressor corrected mass flow rate vs. spool relative corrected speed
-compMassFlowCorrected = massFlow.*(sqrt(inletT2./tempRef)./(inletP1./pressRef));                                   % compressor corrected mass flow rate in [kg/s]
+compMassFlowCorrected = intakeMassFlow.*(sqrt(inletT2/tempRef)./(inletP1/pressRef));                                   % compressor corrected mass flow rate in [kg/s]
 
 figure('Name','Compressor corrected mass flow rate vs. spool relative corrected speed')
 scatter(relCorrectedSpool,compMassFlowCorrected)
@@ -110,7 +110,7 @@ xlabel(sprintf('Corrected Spool \nSpeed [rpm]'))
 xlim([0.3 0.76])
 
 %% Plot 5: Compressor isentropic efficiency vs. compressor corrected mass flow rate
-isenT3 = inletT2.*(exitP3./ambPressure).^( ( (specHeat2 + specHeat1)./2 - 1)./(specHeat2 + specHeat1)./2 );             % calculating T3_is
+isenT3 = inletT2.*(exitP3./inletP1).^( ( specheatAve_comp - 1)./specheatAve_comp );             % calculating T3_is
 isenEfficiency = (isenT3 - inletT2)./(exitT3 - inletT2);                                                               % the isentropic efficiency
 
 figure('Name','Compressor isentropic efficiency vs. compressor corrected mass flow rate')
@@ -119,7 +119,7 @@ ylabel('Isentropic Efficiency')
 xlabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
 
 %% Plot 6: Compressor exit Mach number vs. compressor corrected mass flow rate
-exitMach = sqrt( 2.*( (inletP3./exitP3).^( (specHeat3 - 1)./specHeat3) - 1 ) ./ (specHeat3 + 1) );
+exitMach = sqrt( 2.*( (inletP3./exitP3).^( (specheatAve_comp - 1)./specheatAve_comp) - 1 ) ./ (specheatAve_comp + 1) );
 
 figure('Name','Compressor exit Mach number vs. compressor corrected mass flow rate')
 scatter(compMassFlowCorrected,exitMach)
@@ -151,9 +151,7 @@ ylabel('Exhaust Gas Temperature [K]')
 xlabel('Fuel-Air Ratio')
 
 %% Plot 10: Compressor power vs. spool speed
-exitT3 = exitT3;
-
-compShaftPower = airMassFlow.*( (specHeat3 - specHeat2)/2 ).*(exitT3 - inletT2);
+compShaftPower = intakeMassFlow.*( specheatAve_comp ).*(exitT3 - inletT2);
 
 turbShaftPower = compShaftPower./mechEfficiency;
 
@@ -170,9 +168,10 @@ ylabel(sprintf('Turbine Power [W]'))
 
 %% Plot 11: Turbine isentropic efficiency vs. turbine corrected mass flow
 % rate
-isenT5 = exitT4./( (inletP4./entryP6).^( ( ( (specHeat5 - specHeat4)./2 ) - 1)./( (specHeat5 - specHeat4)./2 ) ) );
-turbIsen = (exitT4 - exitT6)./(exitT4 - isenT5);
-turbMassFlowCorrected = massFlow.*(sqrt(exitT4./tempRef)./(inletP4./pressRef));                                   % turbine corrected mass flow rate in [kg/s]
+exitT4 = turbShaftPower./(intakeMassFlow.*specheatAve_turb) + exitT5;                                             % Formula: P_turb = m_air*Cp*(T4-T5)
+isenT5 = exitT4./( (inletP4./entryP6).^( ( specheatAve_turb - 1)./specheatAve_turb ) );
+turbIsen = (exitT4 - exitT5)./(exitT4 - isenT5);
+turbMassFlowCorrected = massFlow.*(sqrt(exitT4/tempRef)./(inletP4/pressRef));                                   % turbine corrected mass flow rate in [kg/s]
 
 figure('Name','Turbine isentropic efficiency vs. turbine corrected mass flow')
 scatter(turbMassFlowCorrected,turbIsen)
@@ -245,7 +244,7 @@ else
 end
 
 %% Useful functions
-function airDensity = findDensity(pressure,gasConstant,temperature,kPa2Pa)
+function airDensity = findDensity(pressure,gasConstant,temperature)
             % This function returns the value of the air density at a given
             % pressure within the engine. The formula used is based on the
             % ideal gas law(pV = nRT) and the following equation(p =
@@ -253,5 +252,5 @@ function airDensity = findDensity(pressure,gasConstant,temperature,kPa2Pa)
             % with the following relationship: rho = n/V. 
             % Pressure values are in kPa, hence the conversion factor
             
-            airDensity = (pressure.*kPa2Pa)./(gasConstant.*temperature);
+            airDensity = (pressure)./(gasConstant.*temperature);
 end
