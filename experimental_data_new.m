@@ -7,7 +7,23 @@
 % GitHub repository found in the link below, for version control.
 % GitHub: https://github.com/Nusnaaa/aero-propulsion-cw
 
-%% Sorting the raw data into variables
+%% Sorting the raw data into variables and defining constants
+
+% Reference values, conversion factors & consants
+kPa2Pa = 1*10^3;                                            % conversion factor
+tempRef = 288.15;                                           % reference temperature at sea level on a standard day in [K]
+pressRef = 101.325;                                         % reference pressure at sea level on a standard day in [kPa]
+spoolRef = 108000;                                          % reference spool speed in [rpm]
+Cd = 0.58;                                                  % discharge coefficient
+d1 = 71*10^-3;                                              % intake inlet diameter in [m]
+d2= 90*10^-3;                                               % Compressor blade diameter in [m]
+litresMin2litresSec = 1/60;                                 % conversion factor for litres/min to litres/sec
+litre2cubMetre = 1/1000;
+fuelDensity = 800;                                          % density of jet A1 in kg/m^3 @ 15 deg C
+mechEfficiency = 0.99;
+R = 287;                                                    % gas constant in [J/(kg.K)]
+kJ2J = 1000;                                                % conversion factor for converting kJ in J
+
 
 % Preparing the data 
 experimentalData = readtable("Test Data B1.xlsx");
@@ -16,7 +32,7 @@ experimentalData = readtable("Test Data B1.xlsx");
 throttlePosition = table2array(experimentalData(:,3)); % represented as a percentage
 inletT2 = table2array(experimentalData(:,4)); % absolute temperature at station T2's inlet
 exitT3 = table2array(experimentalData(:,5)); % absolute temperature at compressor exit(station T3)
-exitT4 = table2array(experimentalData(:,6)); % absolute,total temperature at combustor exit(station T4) - incorrect measurement
+exitT4_wrong = table2array(experimentalData(:,6)); % absolute,total temperature at combustor exit(station T4) - incorrect measurement
 exitT5 = table2array(experimentalData(:,7)); % absolute, total temperature at turbine exit(station T5)
 exitT6 = table2array(experimentalData(:,8)); % absolute, total nozzle exhaust temperature(station T6)
 ambPressure = table2array(experimentalData(:,9)); % ambient pressure(P_0)
@@ -36,28 +52,17 @@ spoolSpeed = table2array(experimentalData(:,28)); % spool speed in [rpm]
 fuelFlow = table2array(experimentalData(:,29)); % fuel flow in [l/min]
 density = table2array(experimentalData(:,30)); % upstream density in [kg/m^3]
 airMassFlow = table2array(experimentalData(:,31)); % mass flow rate in [kg/s]
-specHeat1 = table2array(experimentalData(:,32)); % specific heat(C_p_1) in [kJ/kg.K]
-specHeat2 = table2array(experimentalData(:,33)); % specific heat(C_p_2) in [kJ/kg.K]
-specHeat3 = table2array(experimentalData(:,34)); % specific heat(C_p_3) in [kJ/kg.K]
-specHeat4 = table2array(experimentalData(:,35)); % specific heat(C_p_4) in [kJ/kg.K]
-specHeat5 = table2array(experimentalData(:,36)); % specific heat(C_p_5) in [kJ/kg.K]
+specHeat1 = table2array(experimentalData(:,32))*kJ2J; % specific heat(C_p_1) in [kJ/kg.K]
+specHeat2 = table2array(experimentalData(:,33))*kJ2J; % specific heat(C_p_2) in [kJ/kg.K]
+specHeat3 = table2array(experimentalData(:,34))*kJ2J; % specific heat(C_p_3) in [kJ/kg.K]
+specHeat4 = table2array(experimentalData(:,35))*kJ2J; % specific heat(C_p_4) in [kJ/kg.K]
+specHeat5 = table2array(experimentalData(:,36))*kJ2J; % specific heat(C_p_5) in [kJ/kg.K]
  
-% Reference values, conversion factors & consants
-kPa2Pa = 1*10^3;                                            % conversion factor
-tempRef = 288.15;                                           % reference temperature at sea level on a standard day in [K]
-pressRef = 101.325;                                         % reference pressure at sea level on a standard day in [kPa]
-spoolRef = 108000;                                          % reference spool speed in [rpm]
-Cd = 0.58;                                                  % discharge coefficient
-d1 = 71*10^-3;                                              % intake inlet diameter in [m]
-d2= 90*10^-3;                                               % Compressor blade diameter in [m]
-litresMin2litresSec = 1/60;                                 % conversion factor for litres/min to litres/sec
-litre2cubMetre = 1/1000;
-fuelDensity = 800;                                          % density of jet A1 in kg/m^3 @ 15 deg C
-mechEfficiency = 0.99;
-R = 287;                                                    % gas constant in [J/(kg.K)]
+% Recalulated values
 intakeAirDensity = findDensity(inletP1,R,inletT2,kPa2Pa);
 specheatAve_turb = (specHeat5 - specHeat4)/2;               % average Cp across turbine
 exitT4 = ( nthroot( (exitT3./inletT2), ( (specheatAve_turb - 1)./specheatAve_turb) ) ).*exitT5;
+
 
 %% Plotting the data
 
@@ -96,7 +101,7 @@ ylabel('Compressor pressure ratio')
 xlabel('Spool relative corrected speed [rpm]')
 
 %% Plot 4: Compressor corrected mass flow rate vs. spool relative corrected speed
-compMassFlowCorrected = massFlow.*(sqrt(exitT3./tempRef)./(exitP3./pressRef));                                   % compressor corrected mass flow rate in [kg/s]
+compMassFlowCorrected = massFlow.*(sqrt(inletT2./tempRef)./(inletP1./pressRef));                                   % compressor corrected mass flow rate in [kg/s]
 
 figure('Name','Compressor corrected mass flow rate vs. spool relative corrected speed')
 scatter(relCorrectedSpool,compMassFlowCorrected)
@@ -130,7 +135,7 @@ ylabel('Burner pressure ratio')
 xlabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
 
 %% Plot 8: FAR vs compressor corrected mass flow rate
-FAR = fuelMassFlow./airMassFlow;
+FAR = fuelMassFlow./intakeMassFlow;
 
 figure('Name','FAR vs. compressor corrected mass flow rate')
 scatter(compMassFlowCorrected,FAR)
@@ -148,7 +153,7 @@ xlabel('Fuel-Air Ratio')
 %% Plot 10: Compressor power vs. spool speed
 exitT3 = exitT3;
 
-compShaftPower = airMassFlow.*( (specHeat3 - specHeat2)./2 ).*(exitT3 - inletT2);
+compShaftPower = airMassFlow.*( (specHeat3 - specHeat2)/2 ).*(exitT3 - inletT2);
 
 turbShaftPower = compShaftPower./mechEfficiency;
 
