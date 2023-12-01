@@ -60,13 +60,13 @@ specHeat5 = table2array(experimentalData(:,36))*kJ2J; % specific heat(C_p_5) in 
  
 % Recalulated values
 intakeAirDensity = findDensity(inletP1,R,inletT2);
-gamma_turb = (specHeat5 + specHeat4)/2;               % average Cp across turbine
-gamma_comp = (specHeat3 + specHeat2)/2;               % average Cp across compressor
+specheatAve_turb = (specHeat5 + specHeat4)/2;               % average Cp across turbine
+specheatAve_comp = (specHeat3 + specHeat2)/2;               % average Cp across compressor
 
-Cv_comp = gamma_comp - R;
-gamma_comp = gamma_comp./Cv_comp;
-Cv_turb = gamma_turb - R;
-gamma_turb = gamma_turb./Cv_turb;
+Cv_comp = specheatAve_comp - R;
+gamma_comp = specheatAve_comp./Cv_comp;
+Cv_turb = specheatAve_turb - R;
+gamma_turb = specheatAve_turb./Cv_turb;
 
 
 %% Plotting the data
@@ -97,7 +97,7 @@ xlabel('Throttle Percentage [%]')
 
 %% Plot 3: Compressor pressure ratio vs spool relative corrected speed
 relCorrectedSpool = (spoolSpeed/spoolRef)./sqrt(exitT3/tempRef);                                                        % corrected spool speed in [rpm]
-% inletP2 = exitP3./(nthroot( (exitT3./inletT2), (gamma_comp - 1)./gamma_comp ) );
+% inletP2 = exitP3./(nthroot( (exitT3./inletT2), (specheatAve_comp - 1)./specheatAve_comp ) );
 inletP2 = ambPressure - pressureLoss;                                                                                   % Pressure at compressor inlet
 compPressureRatio = exitP3./inletP2;
 
@@ -116,7 +116,7 @@ xlabel(sprintf('Corrected Spool \nSpeed [rpm]'))
 xlim([0.3 0.76])
 
 %% Plot 5: Compressor isentropic efficiency vs. compressor corrected mass flow rate
-isenT3 = inletT2.*(exitP3./inletP2).^( ( gamma_comp - 1)./gamma_comp );             % calculating T3_is
+isenT3 = inletT2.*(exitP3./inletP2).^( ( specheatAve_comp - 1)./specheatAve_comp );             % calculating T3_is
 isenEfficiency = (isenT3 - inletT2)./(exitT3 - inletT2);                                                               % the isentropic efficiency
 
 figure('Name','Compressor isentropic efficiency vs. compressor corrected mass flow rate')
@@ -161,7 +161,7 @@ ylabel('Exhaust Gas Temperature [K]')
 xlabel('Fuel-Air Ratio')
 
 %% Plot 10: Compressor power vs. spool speed
-compShaftPower = intakeMassFlow.*( gamma_comp ).*(exitT3 - inletT2);
+compShaftPower = intakeMassFlow.*( specheatAve_comp ).*(exitT3 - inletT2);
 
 turbShaftPower = compShaftPower./mechEfficiency;
 
@@ -178,8 +178,8 @@ ylabel(sprintf('Turbine Power [W]'))
 
 %% Plot 11: Turbine isentropic efficiency vs. turbine corrected mass flow
 % rate
-exitT4 = turbShaftPower./(intakeMassFlow.*gamma_turb) + exitT5;                                             % Formula: P_turb = m_air*Cp*(T4-T5)
-isenT5 = exitT4./( (inletP4./entryP6).^( ( gamma_turb - 1)./gamma_turb ) );
+exitT4 = turbShaftPower./(intakeMassFlow.*specheatAve_turb) + exitT5;                                             % Formula: P_turb = m_air*Cp*(T4-T5)
+isenT5 = exitT4./( (inletP4./entryP6).^( ( specheatAve_turb - 1)./specheatAve_turb ) );
 turbIsen = (exitT4 - exitT5)./(exitT4 - isenT5);
 turbMassFlowCorrected = massFlow.*(sqrt(exitT4/tempRef)./(inletP4/pressRef));                                   % turbine corrected mass flow rate in [kg/s]
 
@@ -209,41 +209,41 @@ ylabel('Net Thrust [N]')
 xlabel('Spool relative corrected speed')
 
 
-% %% For Gasturb Model
-% spoolRel = (spoolSpeed./spoolRef);
-% figure('Name','Corrected Intake Mass Flow Rate vs. Spool Relative Speed')
-% scatter(intakeMassFlow,spoolRel)
-% xlabel('Corrected Intake Mass Flow Rate')
-% ylabel('Spool Relative Speed')
-% 
-% % Get coefficients of a line fit through the data.
-% coefficients = polyfit(intakeMassFlow, spoolRel, 1);
-% 
-% % Create a new x axis with exactly 1000 points
-% xFit = linspace(min(intakeMassFlow), max(intakeMassFlow), 1000);
-% 
-% % Get the estimated yFit value for each of those 1000 new x locations.
-% yFit = polyval(coefficients , xFit);
-% hold on;
-% plot(xFit, yFit, 'r-', 'LineWidth', 2); % Plot fitted line.
-% grid on;
-% 
-% figure('Name','Compressor pressure ratio vs. Spool Relative Speed')
-% scatter(spoolRel,compPressureRatio)
-% ylabel('Compressor Pressure Ratio')
-% xlabel('Spool Relative Speed')
-% 
-% % Get coefficients of a line fit through the data.
-% coefficients1 = polyfit(spoolRel, compPressureRatio, 1);
-% 
-% % Create a new y axis with exactly 1000 points
-% yFit1 = linspace(min(compPressureRatio), max(compPressureRatio), 1000);
-% 
-% % Get the estimated xFit value for each of those 1000 new x locations.
-% xFit1 = polyval(coefficients1 , yFit1);
-% hold on;
-% plot(xFit1, yFit1, 'r-', 'LineWidth', 2); % Plot fitted line.
-% grid on;
+%% For Gasturb Model
+spoolRel = (spoolSpeed./spoolRef);
+figure('Name','Corrected Intake Mass Flow Rate vs. Spool Relative Speed')
+scatter(intakeMassFlow,spoolRel)
+xlabel('Corrected Intake Mass Flow Rate')
+ylabel('Spool Relative Speed')
+
+% Get coefficients of a line fit through the data.
+coefficients = polyfit(intakeMassFlow, spoolRel, 1);
+
+% Create a new x axis with exactly 1000 points
+xFit = linspace(min(intakeMassFlow), max(intakeMassFlow), 1000);
+
+% Get the estimated yFit value for each of those 1000 new x locations.
+yFit = polyval(coefficients , xFit);
+hold on;
+plot(xFit, yFit, 'r-', 'LineWidth', 2); % Plot fitted line.
+grid on;
+
+figure('Name','Compressor pressure ratio vs. Spool Relative Speed')
+scatter(spoolRel,compPressureRatio)
+ylabel('Compressor Pressure Ratio')
+xlabel('Spool Relative Speed')
+
+% Get coefficients of a line fit through the data.
+coefficients1 = polyfit(spoolRel, compPressureRatio, 1);
+
+% Create a new y axis with exactly 1000 points
+yFit1 = linspace(min(compPressureRatio), max(compPressureRatio), 1000);
+
+% Get the estimated xFit value for each of those 1000 new x locations.
+xFit1 = polyval(coefficients1 , yFit1);
+hold on;
+plot(xFit1, yFit1, 'r-', 'LineWidth', 2); % Plot fitted line.
+grid on;
 
 %% For CFX air intake flow
 if isfile("CFX Air to Throttle.xlsx")
