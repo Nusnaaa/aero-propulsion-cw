@@ -87,6 +87,8 @@ grid minor
 ylabel('Mass Flow Rate [kg/s]')
 xlabel('Throttle Percentage [%]')
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 2: Intake pressure loss vs throttle percentage
 compressorEntryDensity = intakeAirDensity;                                                         % the density of air at the compressor entry. Assumed pressure is equal to inlet pressure. In [kg/m^3]
 compressorArea = 0.25*pi*(d2^2);
@@ -101,6 +103,8 @@ title("Intake pressure loss vs throttle position")
 ylabel('Intake Pressure Loss [Pa]')
 xlabel('Throttle Percentage [%]')
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 3: Compressor pressure ratio vs spool relative corrected speed
 relCorrectedSpool = (spoolSpeed/spoolRef)./sqrt(exitT3/tempRef);                                                        % corrected spool speed in [rpm]
 % inletP2 = exitP3./(nthroot( (exitT3./inletT2), (gamma_comp - 1)./gamma_comp ) );
@@ -114,6 +118,8 @@ title("Compressor Pressure ratio vs Spool Relative Corected Speed")
 ylabel('Compressor pressure ratio')
 xlabel('Spool relative corrected speed [rpm]')
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 4: Compressor corrected mass flow rate vs. spool relative corrected speed
 compMassFlowCorrected = intakeMassFlow.*(sqrt(inletT2/tempRef)./(inletP2/pressRef));                                   % compressor corrected mass flow rate in [kg/s]
 
@@ -125,6 +131,8 @@ ylabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
 xlabel(sprintf('Corrected Spool \nSpeed [rpm]'))
 xlim([0.3 0.76])
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 5: Compressor isentropic efficiency vs. compressor corrected mass flow rate
 isenT3 = inletT2.*(exitP3./inletP2).^( ( gamma_comp - 1)./gamma_comp );             % calculating T3_is
 isenEfficiency = (isenT3 - inletT2)./(exitT3 - inletT2);                                                               % the isentropic efficiency
@@ -135,6 +143,8 @@ grid minor
 title("Compressor isentropic efficiency vs. compressor corrected mass flow rate")
 ylabel('Compressor Isentropic Efficiency')
 xlabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
+
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 %% Plot 6: Compressor exit Mach number vs. compressor corrected mass flow rate
 tot_stat_ratio = inletP3./exitP3;
@@ -150,6 +160,8 @@ title("Compressor exit Mach number vs. compressor corrected mass flow rate")
 ylabel('Compressor Exit Mach Number')
 xlabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 7: Burner pressure ratio vs. compressor corrected mass flow rate
 combustorPressureRatio = inletP4./inletP3;
 
@@ -160,6 +172,8 @@ title("Burner pressure ratio vs. compressor corrected mass flow rate")
 ylabel('Burner pressure ratio')
 xlabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 8: FAR vs compressor corrected mass flow rate
 FAR = fuelMassFlow./intakeMassFlow;
 
@@ -169,6 +183,8 @@ grid minor
 title("FAR vs. compressor corrected mass flow rate")
 ylabel('Fuel-Air-Ratio')
 xlabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
+
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 %% Plot 9: EGT vs FAR
 EGT = exitT6;                                                                                                           % exhaust gas temperature in [K]
@@ -183,6 +199,8 @@ title("EGT vs. FAR")
 colormap("jet")
 ylabel('Exhaust Gas Temperature [K]')
 xlabel('Fuel-Air Ratio')
+
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 %% Plot 10: Compressor power vs. spool speed
 compShaftPower = intakeMassFlow.*( specHeatAve_comp ).*(exitT3 - inletT2);
@@ -204,6 +222,8 @@ yyaxis right
 scatter(spoolSpeed,turbShaftPowerkW)
 ylabel(sprintf('Turbine Power [kW]'))
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 11: Turbine isentropic efficiency vs. turbine corrected mass flow
 % rate
 exitT4 = turbShaftPower./(intakeMassFlow.*specHeatAve_turb) + exitT5;                                             % Formula: P_turb = m_air*Cp*(T4-T5)
@@ -217,6 +237,8 @@ grid minor
 title("Turbine isentropic efficiency vs. turbine corrected mass flow")
 ylabel('Turbine isentropic efficiency')
 xlabel('Turbine corrected mass flow rate [kg/s]')
+
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 %% Plot 12: Turbine pressure ratio vs. turbine corrected mass flow rate
 turbPressureRatio = entryP6./inletP4;
@@ -232,6 +254,8 @@ colormap(flip(jet))
 ylabel('Turbine pressure ratio')
 xlabel('Turbine corrected mass flow rate [kg/s]')
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 13: Net Thrust vs compressor corrected mass flow rate
 figure('Name','Net Thrust vs compressor corrected mass flow rate')
 scatter(compMassFlowCorrected,thrust)
@@ -240,6 +264,8 @@ title("Net Thrust vs compressor corrected mass flow rate")
 ylabel('Net Thrust [N]')
 xlabel(sprintf('Compressor Corrected \nMass Flow Rate [kg/s]'))
 
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
+
 %% Plot 14: Net Thrust vs spool relative corrected speed
 figure('Name','Net Thrust vs spool relative corrected speed')
 scatter(relCorrectedSpool,thrust)
@@ -247,6 +273,8 @@ grid minor
 title("Net Thrust vs spool relative corrected speed")
 ylabel('Net Thrust [N]')
 xlabel('Spool relative corrected speed')
+
+set(findall(gcf,'-property','FontSize'),'FontSize',20)
 
 % %% Plot
 % figure('Name','Comparison')
